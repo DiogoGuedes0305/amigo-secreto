@@ -1,47 +1,49 @@
-# 🎅 Amigo Secreto — Natal em família
+🇬🇧 **English** · 🇵🇹 [Português](README.pt.md)
 
-Uma web app para o amigo secreto de Natal da família: cada um entra no telemóvel, faz a lista de desejos,
-e o organizador faz o sorteio na app. Sem contas e sem palavras-passe, num só ficheiro HTML.
+# 🎅 Amigo Secreto — family Secret Santa
 
-▶ **Experimentar a demo:** https://diogoguedes0305.github.io/amigo-secreto/
+A web app for the family's Christmas Secret Santa: everyone joins on their phone, writes a wish list,
+and the organiser runs the draw in the app. No accounts, no passwords, a single HTML file.
 
-<p align="center"><img src="docs/demo.gif" alt="Demo animada: entrar, lista de desejos, sorteio animado, o amigo secreto e recordações" width="720"></p>
-<p align="center"><sub>🎬 Demo animada · do registo ao sorteio</sub></p>
+▶ **Try the demo:** https://diogoguedes0305.github.io/amigo-secreto/
 
-> A demo usa uma **família fictícia** (Ana, Bruno, Carla…) e guarda tudo **só no teu browser**.
-> Entra como a organizadora com **Ana Ribeiro · 910 000 001**, ou como outra pessoa com 910 000 002 a 910 000 008.
-> "👤 Trocar de pessoa" muda de pessoa e "↺ Repor" volta ao início.
+<p align="center"><img src="docs/demo.gif" alt="Animated demo: joining, wish list, animated draw, your Secret Santa and memories" width="720"></p>
+<p align="center"><sub>🎬 Animated demo · from sign-up to the draw</sub></p>
 
-## O que tem
+> The demo uses a **fictional family** (Ana, Bruno, Carla…) and stores everything **only in your browser**.
+> Log in as the organiser with **Ana Ribeiro · 910 000 001**, or as someone else with 910 000 002 to 910 000 008.
+> "👤 Trocar de pessoa" switches person and "↺ Repor" resets the demo. The app itself is in Portuguese.
 
-- **Entrar sem conta**: primeiro nome, último nome e telemóvel. O telemóvel fica a ser a chave da pessoa;
-  se o mesmo número entrar noutro aparelho, o organizador tem de aceitar o pedido.
-- **🎲 Sorteio animado** (chapéu, papelinhos, 3-2-1, confetis e sons). Todos os telemóveis veem a animação ao mesmo tempo.
-  Regras opcionais: ninguém tira alguém da **mesma casa** nem o **mesmo do ano passado**.
-- **👀 O teu amigo secreto**, escondido até tocares em "Ver".
-- **📝 Lista de desejos** (com links e notas). A do teu amigo secreto aparece por baixo do cartão dele.
-- **⏳ Contagem decrescente** para o dia da troca, valor da prenda e local.
-- **📸 Recordações**: um cartão por ano com o álbum de fotos e "quem deu a quem".
-- **⚙️ Admin** (só o organizador): fases do Natal, casas, quem entrou na app, quem ainda não fez a lista
-  e um lembrete pronto para mandar no WhatsApp.
+## Features
 
-## Como funciona
+- **Join without an account**: first name, last name and phone number. The phone becomes the person's key;
+  if the same number signs in on another device, the organiser has to approve it.
+- **🎲 Animated draw** (hat, paper slips, 3-2-1, confetti and sounds). Every phone sees the animation at the same time.
+  Optional rules: nobody gets someone from the **same household** or the **same person as last year**.
+- **👀 Your Secret Santa**, hidden until you tap "Ver".
+- **📝 Wish list** (with links and notes). Your Secret Santa's list appears below their card.
+- **⏳ Countdown** to the exchange day, gift budget and place.
+- **📸 Memories**: one card per year with the photo album and "who gave to whom".
+- **⚙️ Admin** (organiser only): Christmas phases, households, who has opened the app, who hasn't written a list yet,
+  and a ready-to-send WhatsApp reminder.
 
-- `public/index.html` — a app inteira (HTML, CSS e JavaScript, Firebase SDK compat).
-- `public/config.js` — a configuração do Firebase. Com `null`, a app corre em **modo demo**.
-- `public/demo-firebase.js` — imita o Firestore no `localStorage`, com os dados fictícios (só para a demo).
-- `firestore.rules` — regras abertas às coleções da app (pensado para uma família, sem autenticação).
+## How it works
 
-### Usar com a tua família
+- `public/index.html` — the whole app (HTML, CSS and JavaScript, Firebase compat SDK).
+- `public/config.js` — the Firebase config. With `null`, the app runs in **demo mode**.
+- `public/demo-firebase.js` — mimics Firestore in `localStorage` with the fictional data (demo only).
+- `firestore.rules` — rules open to the app's collections (meant for one family, no authentication).
 
-1. Cria um projeto no [Firebase](https://console.firebase.google.com) com Firestore e Hosting.
-2. Cola a configuração do projeto em `public/config.js`.
-3. Troca `CODIGO_ADMIN` em `public/index.html`.
-4. `firebase deploy`. Depois de o organizador entrar na app, põe o id dele (`p` + telemóvel) em
-   `config/geral.adminId`, na consola do Firestore.
+### Use it with your family
 
-> As regras do Firestore são abertas: quem tiver o link e a configuração consegue ler e escrever.
-> Serve para uma família; para algo maior, acrescenta Firebase Auth e regras por utilizador.
+1. Create a [Firebase](https://console.firebase.google.com) project with Firestore and Hosting.
+2. Paste the project config into `public/config.js`.
+3. Change `CODIGO_ADMIN` in `public/index.html`.
+4. `firebase deploy`. After the organiser joins the app, put their id (`p` + phone number) in
+   `config/geral.adminId` in the Firestore console.
+
+> The Firestore rules are open: anyone with the link and the config can read and write.
+> That's fine for a family; for something bigger, add Firebase Auth and per-user rules.
 
 ---
-Feito com a ajuda do Claude. Os nomes e números da demo são fictícios.
+Made with the help of Claude. The names and numbers in the demo are fictional.
