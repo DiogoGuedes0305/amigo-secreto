@@ -1,0 +1,1165 @@
+﻿<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amigo Secreto</title>
+<meta name="theme-color" content="#e8958e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Amigo Secreto">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #fcf8f4; --card: #ffffff; --ink: #3b302c; --soft: #8a7d76;
+    --red: #e8958e; --on-red: #4f1f1c; --rose: #a9504a; --green: #96cdab; --on-green: #17432c;
+    --gold: #f0cf7e; --line: #ebdfd3; --ok: #dff0e6; --warn: #fbebcd;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 20px; line-height: 1.4; }
+  #app { max-width: 560px; margin: 0 auto; padding: 16px 16px 120px; }
+  h1 { font-size: 1.6rem; margin: 8px 0 4px; }
+  h2 { font-size: 1.25rem; margin: 0 0 12px; }
+  p { margin: 0 0 12px; }
+  .top { text-align: center; padding: 18px 0 10px; }
+  .top .emoji { font-size: 3rem; line-height: 1; }
+  .sub { color: var(--soft); font-size: .95rem; }
+  .card { background: var(--card); border-radius: 22px; padding: 20px; margin: 14px 0;
+    box-shadow: 0 2px 0 var(--line), 0 6px 20px rgba(80,40,20,.06); }
+  label { display: block; font-weight: 600; margin: 14px 0 6px; }
+  textarea { resize: vertical; min-height: 90px; }
+  .desejo { border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; margin: 10px 0; }
+  .desejo b { display: block; font-size: 1.05rem; }
+  .desejo p { margin: 6px 0 0; color: var(--soft); font-size: .95rem; white-space: pre-wrap; }
+  .desejo a { display: inline-block; margin-top: 8px; color: var(--on-green); font-weight: 700; font-size: .95rem; word-break: break-all; }
+  .desejo .x { float: right; margin: -4px -6px 0 0; }
+  .desejo .acoes { display: flex; gap: 8px; margin-top: 12px; }
+  .desejo .acoes button { flex: 1; min-height: 44px; border-radius: 12px; font-weight: 700; font-size: .95rem; background: #f2ebe4; color: var(--ink); }
+  .desejo .acoes button.perigo { background: #fde4e4; color: #8c1c23; }
+  .desejo .acoes button.green { background: var(--green); color: var(--on-green); }
+  .desejo.a-editar { border-color: var(--green); }
+  .desejo form .btn { min-height: 52px; }
+  input, select, textarea { width: 100%; font: inherit; font-size: 1.1rem; padding: 14px 16px; border-radius: 14px;
+    border: 2px solid var(--line); background: #fff; color: var(--ink); }
+  input:focus, select:focus { outline: none; border-color: var(--green); }
+  button { font: inherit; cursor: pointer; border: 0; }
+  .btn { display: block; width: 100%; min-height: 64px; padding: 14px 18px; margin: 12px 0 0;
+    border-radius: 18px; background: var(--red); color: var(--on-red); font-size: 1.15rem; font-weight: 700; }
+  .btn:active { transform: scale(.98); }
+  .btn.green { background: var(--green); color: var(--on-green); }
+  .btn.grey { background: #f2ebe4; color: var(--ink); }
+  .discreto { display: block; margin: 22px auto 0; background: none; color: var(--soft); font-size: .85rem; text-decoration: underline; padding: 8px; }
+  .btn:disabled { opacity: .45; }
+  .pick { display: block; width: 100%; text-align: left; min-height: 60px; padding: 14px 18px; margin: 8px 0;
+    border-radius: 16px; background: #fff; border: 2px solid var(--line); font-size: 1.1rem; color: var(--ink); }
+  .pick:active { background: var(--ok); border-color: var(--green); }
+  .big { font-size: 1.9rem; font-weight: 800; color: #3d8a5f; text-align: center; margin: 6px 0 4px; }
+  .center { text-align: center; }
+  .msg { border-radius: 14px; padding: 12px 14px; margin: 12px 0 0; font-size: .95rem; }
+  .msg.err { background: #fde4e4; color: #8c1c23; }
+  .msg.ok { background: var(--ok); color: #164d32; }
+  .msg.warn { background: var(--warn); color: #6b4a10; }
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(251,245,236,.96); border-top: 1px solid var(--line); justify-content: center; }
+  .tabs button { flex: 1; max-width: 200px; min-height: 58px; border-radius: 16px; background: #efe6db; color: var(--ink);
+    font-size: .8rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px; }
+  .tabs button .ic { font-size: 1.3rem; line-height: 1.1; }
+  a.btn { text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+  .par { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .par:last-child { border-bottom: 0; }
+  .par .de { flex: 1; text-align: right; font-weight: 700; }
+  .par .para { flex: 1; }
+  .par.eu { background: var(--ok); border-radius: 10px; padding: 9px 8px; }
+  .ano-h { display: flex; align-items: center; gap: 8px; }
+  .ano-h h2 { flex: 1; margin: 0; }
+  .tabs button.on { background: var(--red); color: var(--on-red); }
+  .gear { position: fixed; top: calc(10px + env(safe-area-inset-top)); right: 10px; z-index: 5; width: 40px; height: 40px;
+    border-radius: 50%; background: rgba(255,255,255,.7); color: var(--soft); font-size: 1.05rem; opacity: .55;
+    display: flex; align-items: center; justify-content: center; }
+  .gear.on { opacity: 1; background: #efe6db; color: var(--ink); }
+  .gear .dot { position: absolute; top: 4px; right: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+  .submenu { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 0 4px; padding: 2px 0 8px; }
+  .submenu::-webkit-scrollbar { display: none; }
+  .submenu button { flex: none; padding: 9px 14px; border-radius: 99px; background: #efe6db; color: var(--ink); font-size: .92rem; font-weight: 700; white-space: nowrap; }
+  .submenu button.on { background: var(--green); color: var(--on-green); }
+  .sorteio { position: fixed; inset: 0; z-index: 50; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; text-align: center; color: #fff; background: radial-gradient(circle at 50% 40%, #2f6b4c, #163527); animation: s-entra .4s ease; }
+  .sorteio h2 { color: #fff; font-size: 1.5rem; margin: 18px 0 6px; min-height: 2.2em; display: flex; align-items: center; }
+  .sorteio .s-sub { color: #d9efe1; min-height: 3em; margin: 0; }
+  .sorteio .s-fim { width: 100%; max-width: 320px; }
+  .cd { position: relative; overflow: hidden; background: linear-gradient(170deg, #2f6b4c, #1d4733); color: #fff; }
+  .cd h2 { color: #fff; margin: 0; }
+  .cd .sub { color: #cfe8d8; text-transform: capitalize; }
+  .cd-in { position: relative; z-index: 1; }
+  .cd-faltam { margin: 0; font-size: 1rem; color: #cfe8d8; }
+  .cd-num { font-size: 4rem; font-weight: 800; line-height: 1.1; }
+  .cd i { position: absolute; top: -20px; color: #fff; opacity: .7; font-style: normal; font-size: .9rem; animation: cd-neve linear infinite; }
+  @keyframes cd-neve { to { top: 105%; transform: translateX(20px) rotate(180deg); } }
+  .s-som { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,.15); font-size: 1.2rem; }
+  .s-palco { position: relative; width: 260px; height: 230px; }
+  .s-chapeu { position: absolute; left: 0; right: 0; bottom: 0; font-size: 110px; line-height: 1; }
+  .s-chapeu.abanar { animation: s-abanar .35s ease-in-out infinite; }
+  .s-chapeu.salto { animation: s-salto .7s cubic-bezier(.3,1.6,.5,1); }
+  .s-papel { position: absolute; left: 50%; top: 0; transform: translateX(-50%); background: #fffaf0; color: #3b302c; font-weight: 700;
+    padding: 6px 12px; border-radius: 6px; box-shadow: 0 3px 8px rgba(0,0,0,.3); white-space: nowrap; animation: s-cai 1.1s ease-in forwards; }
+  .s-conta { font-size: 4.5rem; font-weight: 800; animation: s-pulsa .85s ease-out; }
+  .s-confeti { position: absolute; top: -20px; width: 9px; height: 14px; border-radius: 2px; animation: s-confeti linear forwards; }
+  @keyframes s-entra { from { opacity: 0; } }
+  @keyframes s-cai { 0% { transform: translate(calc(-50% + var(--x)), -60px) rotate(var(--r)); opacity: 1; }
+    70% { opacity: 1; } 100% { transform: translate(-50%, 150px) rotate(0) scale(.3); opacity: 0; } }
+  @keyframes s-abanar { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-14deg) translateX(-6px); } 75% { transform: rotate(14deg) translateX(6px); } }
+  @keyframes s-salto { 0% { transform: scale(.4); } 100% { transform: scale(1); } }
+  @keyframes s-pulsa { 0% { transform: scale(2.2); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1); } }
+  @keyframes s-confeti { to { transform: translateY(110vh) rotate(720deg); } }
+  .row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .nm { flex: 1; min-width: 0; }
+  .row .nm b { display: block; }
+  .row .nm small { color: var(--soft); }
+  .row select { width: auto; max-width: 42%; padding: 8px 10px; font-size: .9rem; }
+  .x { background: transparent; color: var(--soft); font-size: 1.2rem; padding: 6px 8px; }
+  .tag { display: inline-block; font-size: .8rem; padding: 3px 9px; border-radius: 99px; background: #efe6db; margin-top: 2px; }
+  .tag.ok { background: var(--ok); color: #164d32; }
+  .tag.wait { background: var(--warn); color: #6b4a10; }
+  .tag.forgot { background: #fde4e4; color: #8c1c23; }
+  .toggle { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 1rem; }
+  .toggle input { width: 28px; height: 28px; flex: none; accent-color: var(--green); }
+  .reveal { background: linear-gradient(160deg, #f2b5ae, #f1d7a3); color: var(--on-red); text-align: center; border-radius: 22px; padding: 26px 18px; }
+  .reveal .big { color: #1f6b45; }
+  .reveal .hidden { font-size: 1.9rem; font-weight: 800; letter-spacing: .2em; filter: blur(1px); opacity: .6; }
+  .reveal .btn { background: #fff; color: var(--on-red); }
+  .link { background: none; color: var(--soft); text-decoration: underline; font-size: .85rem; display: block; margin: 30px auto 0; }
+  .casas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { background: #efe6db; border-radius: 99px; padding: 6px 6px 6px 14px; font-size: .95rem; display: inline-flex; align-items: center; gap: 4px; }
+  .inline { display: flex; gap: 8px; }
+  .inline input { flex: 1; }
+  .inline .btn { width: auto; margin: 0; min-height: 0; padding: 0 18px; }
+  .snow { position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: .5;
+    background-image: radial-gradient(#e9dccb 1.5px, transparent 1.6px); background-size: 34px 34px; }
+</style>
+</head>
+<body>
+<div class="snow"></div>
+<div id="app"><div class="top"><div class="emoji">🎄</div><p class="sub">A abrir…</p></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- config.js: a configuração do teu projeto Firebase. Sem ela (FIREBASE_CONFIG = null), a app corre em modo demo,
+     com dados fictícios guardados só neste browser (demo-firebase.js). -->
+<script src="config.js"></script>
+<script src="demo-firebase.js"></script>
+<script>
+firebase.initializeApp(window.FIREBASE_CONFIG || {});
+const db = firebase.firestore();
+// Simulação: aberta em localhost (com um projeto a sério), a app usa o emulador e nunca a base real.
+const SIMULACAO = !!window.FIREBASE_CONFIG && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+if (SIMULACAO) {
+  db.useEmulator("127.0.0.1", 8080);
+  document.addEventListener("DOMContentLoaded", () => document.body.insertAdjacentHTML("afterbegin",
+    `<div style="position:sticky;top:0;z-index:9;background:#6b4a10;color:#fff;text-align:center;font-weight:700;padding:6px;font-size:.9rem">🧪 SIMULAÇÃO — cópia local, ninguém vê</div>`));
+}
+const CODIGO_ADMIN = "troca-este-codigo";
+const CFG_REF = db.doc("config/geral");
+const CFG_DEFAULT = { ano: 2026, fase: "registo", adminId: null, casas: [],
+  regras: { casa: true, anoPassado: true }, valor: "", data: "" };
+
+// ---------- estado ----------
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+// Desejos são de um só Natal: os antigos (sem ano) contam como 2026.
+const desteAno = d => (d.ano || 2026) === (S.cfg ? S.cfg.ano : 2026);
+const S = {
+  me: store.get("as_me"), pessoas: null, cfg: null, resp: {}, anoDoc: null,
+  tab: "meu", pick: null, show: false, confirm: null, adminOpen: false,
+  msg: null, adminMsg: null, busy: false,
+  meusTodos: [], amigoTodos: [], desejosTodos: {}, desejosDe: null, desejoMsg: null,
+  hash: null, pedido: store.get("as_pedido"), pedidos: {}
+};
+
+Object.defineProperties(S, {
+  meusDesejos: { get() { return this.meusTodos.filter(desteAno); } },
+  desejosAmigo: { get() { return this.amigoTodos.filter(desteAno); } }
+});
+
+// ---------- utilitários ----------
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nome = id => S.pessoas && S.pessoas[id] ? S.pessoas[id].nome + " " + S.pessoas[id].apelido : "?";
+const primeiro = id => S.pessoas && S.pessoas[id] ? S.pessoas[id].nome : "?";
+const lista = () => Object.keys(S.pessoas || {}).sort((a, b) => nome(a).localeCompare(nome(b), "pt"));
+const isAdmin = () => S.cfg && S.me && S.cfg.adminId === S.me;
+const cap = s => s.trim().replace(/\s+/g, " ").toLowerCase().replace(/(^|\s|-)(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+function normTel(t) {
+  let d = String(t).replace(/\D/g, "");
+  if (d.length === 14 && d.startsWith("00351")) d = d.slice(5);
+  if (d.length === 12 && d.startsWith("351")) d = d.slice(3);
+  return d;
+}
+
+// ---------- render (não interrompe quem está a escrever) ----------
+let pendente = false;
+function render() {
+  const a = document.activeElement;
+  if (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName) && document.getElementById("app").contains(a)) { pendente = true; return; }
+  pendente = false;
+  document.getElementById("app").innerHTML = vista();
+}
+document.addEventListener("focusout", () => setTimeout(() => { if (pendente) render(); }, 50));
+function force() { pendente = false; document.getElementById("app").innerHTML = vista(); }
+
+function vista() {
+  if (!S.cfg || !S.pessoas || !S.hash) return `<div class="top"><div class="emoji">🎄</div><p class="sub">A abrir…</p></div>`;
+  if (S.pedido) return vistaEspera();
+  // espera pelo ano e pelas respostas, para não mostrar um ecrã errado durante um instante
+  if (S.me && S.pessoas[S.me] && (!S.anoPronto || !S.respPronto)) return `<div class="top"><div class="emoji">🎄</div><p class="sub">A abrir…</p></div>`;
+  if (!S.me || !S.pessoas[S.me]) return vistaLogin();
+  ligarMeusDesejos(); ligarPedidosAdmin(); registarEntrada(); verificarAoVivo();
+  const tabs = `<nav class="tabs">
+      <button class="${S.tab === "meu" ? "on" : ""}" onclick="irTab('meu')"><span class="ic">🎁</span>Amigo</button>
+      <button class="${S.tab === "desejos" ? "on" : ""}" onclick="irTab('desejos')"><span class="ic">📝</span>Desejos</button>
+      <button class="${S.tab === "recordacoes" ? "on" : ""}" onclick="irTab('recordacoes')"><span class="ic">📸</span>Recordações</button></nav>`;
+  const naAdmin = S.tab === "admin";
+  const gear = isAdmin() ? `<button class="gear${naAdmin ? " on" : ""}" aria-label="${naAdmin ? "Fechar admin" : "Admin"}"
+      onclick="irTab('${naAdmin ? "meu" : "admin"}')">${naAdmin ? "✕" : "⚙️"}${!naAdmin && Object.keys(S.pedidos).length ? `<span class="dot"></span>` : ""}</button>` : "";
+  const corpo = naAdmin && isAdmin() ? vistaAdmin() : S.tab === "desejos" ? vistaDesejos()
+    : S.tab === "recordacoes" ? vistaRecordacoes() : vistaMeu();
+  return gear + corpo + tabs;
+}
+
+// ---------- chave do telemóvel ----------
+async function sha(t) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+  return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+}
+(async () => {
+  let k = store.get("as_chave");
+  if (!k) {
+    k = Array.from(crypto.getRandomValues(new Uint8Array(24))).map(x => x.toString(16).padStart(2, "0")).join("");
+    store.set("as_chave", k);
+  }
+  S.hash = await sha(k);
+  if (S.pedido) ligarPedido();
+  verificarChave();
+  render();
+})();
+function verificarChave() {
+  if (!S.me || S.busy || !S.pessoas || !S.hash) return;
+  const p = S.pessoas[S.me];
+  // sem pessoa, ou este telemóvel não tem a chave dela → sai
+  if (!p || p.livre || (p.chaves && p.chaves.length && !p.chaves.includes(S.hash))) { S.me = null; store.del("as_me"); }
+  // perfis antigos sem chave: este telemóvel fica a ser o dono
+  else if (!p.chaves || !p.chaves.length) db.doc("pessoas/" + S.me).update({ chaves: [S.hash] });
+}
+let unsubPedido = null;
+function ligarPedido() {
+  unsubPedido && unsubPedido();
+  const id = S.pedido;
+  unsubPedido = db.doc("pedidos/" + id).onSnapshot(s => {
+    if (s.exists) return;
+    // pedido fechado: aceite (a chave já está na pessoa) ou recusado
+    setTimeout(async () => {
+      if (S.pedido !== id) return;
+      const p = await db.doc("pessoas/" + id).get();
+      const ch = p.exists && p.data().chaves || [];
+      unsubPedido && unsubPedido(); unsubPedido = null;
+      S.pedido = null; store.del("as_pedido");
+      if (ch.includes(S.hash)) { S.me = id; store.set("as_me", id); S.msg = null; }
+      else S.msg = "O pedido não foi aceite. Fala com o organizador.";
+      force();
+    }, 1200);
+  });
+}
+function vistaEspera() {
+  return `<div class="top"><div class="emoji">🔒</div><h1>Quase lá!</h1></div>
+  <div class="card center">
+    <p>Este número já está registado <b>noutro telemóvel</b>.</p>
+    <p>Pede ao <b>organizador</b> para te deixar entrar. Assim que ele aceitar, a app abre sozinha.</p>
+    <p class="sub">Podes fechar a app e voltar mais tarde.</p>
+    <button class="btn grey" onclick="cancelarPedido()">Cancelar</button>
+  </div>`;
+}
+async function cancelarPedido() {
+  const id = S.pedido;
+  unsubPedido && unsubPedido(); unsubPedido = null;
+  S.pedido = null; store.del("as_pedido"); force();
+  await db.doc("pedidos/" + id).delete().catch(() => {});
+}
+
+// ---------- login ----------
+function vistaLogin() {
+  return `<div class="top"><div class="emoji">🎅</div><h1>Amigo Secreto</h1><p class="sub">Natal em família</p></div>
+  <div class="card">
+    <h2>Quem és tu?</h2>
+    <p class="sub">Só precisas de fazer isto uma vez.</p>
+    <form onsubmit="entrar(event)">
+      <label for="f-nome">Primeiro nome</label>
+      <input id="f-nome" autocomplete="given-name" placeholder="Ex.: Maria" required>
+      <label for="f-apelido">Último nome</label>
+      <input id="f-apelido" autocomplete="family-name" placeholder="Ex.: Silva" required>
+      <label for="f-tel">Número de telemóvel</label>
+      <input id="f-tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Ex.: 912 345 678" required>
+      <button class="btn" type="submit" ${S.busy ? "disabled" : ""}>Entrar</button>
+      ${S.msg ? `<div class="msg err">${esc(S.msg)}</div>` : ""}
+    </form>
+  </div>`;
+}
+async function entrar(e) {
+  e.preventDefault();
+  const n = cap(document.getElementById("f-nome").value);
+  const a = cap(document.getElementById("f-apelido").value);
+  const t = normTel(document.getElementById("f-tel").value);
+  document.activeElement && document.activeElement.blur();
+  if (!n || !a) { S.msg = "Escreve o primeiro e o último nome."; return force(); }
+  if (t.length !== 9) { S.msg = "O número de telemóvel deve ter 9 algarismos."; return force(); }
+  const id = "p" + t;
+  S.busy = true; S.msg = null; force();
+  try {
+    const ref = db.doc("pessoas/" + id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      const p = { nome: n, apelido: a, telefone: t, casa: "", criadoEm: Date.now(), chaves: [S.hash] };
+      await ref.set(p); S.pessoas[id] = p; S.me = id; store.set("as_me", id);
+    } else {
+      const d = snap.data(), ch = d.chaves;
+      if (d.livre || !ch || !ch.length || ch.includes(S.hash)) {
+        // perfil sem chave (ou libertado pelo admin): este telemóvel fica a ser o dono
+        if (d.livre || !ch || !ch.length) {
+          await ref.update({ chaves: [S.hash], livre: firebase.firestore.FieldValue.delete() });
+          S.pessoas[id] = Object.assign({}, d, { chaves: [S.hash] }); delete S.pessoas[id].livre;
+        }
+        S.me = id; store.set("as_me", id);
+      } else {
+        // número já registado noutro telemóvel: pede autorização ao organizador
+        await db.doc("pedidos/" + id).set({ hash: S.hash, escrito: n + " " + a, em: Date.now() });
+        S.pedido = id; store.set("as_pedido", id); ligarPedido();
+      }
+    }
+  } catch (err) { S.msg = "Não foi possível entrar. Verifica a internet e tenta outra vez."; }
+  S.busy = false; force();
+}
+
+// ---------- o meu amigo secreto ----------
+function vistaMeu() {
+  const c = S.cfg, ano = c.ano, r = S.resp[S.me];
+  // Enquanto a pessoa ainda não respondeu, a pergunta é a primeira coisa no ecrã.
+  if (c.fase === "respostas" && !r) {
+    const corpo = S.pick
+      ? `<div class="card center" style="margin-top:20px"><p>O teu amigo secreto deste ano é…</p><div class="big">${esc(nome(S.pick))}</div><p class="sub">Está certo?</p>
+        <button class="btn green" onclick="guardar()" ${S.busy ? "disabled" : ""}>Sim, guardar</button>
+        <button class="btn grey" onclick="S.pick=null;force()">Não, voltar</button></div>`
+      : `<div class="card" style="margin-top:20px"><p class="sub" style="margin:0 0 4px">Olá, ${esc(primeiro(S.me))}! 🎄</p>
+        <h2>Quem te saiu no amigo secreto deste ano?</h2><p class="sub">Toca no nome. Ninguém mais vai ver.</p>
+        ${lista().filter(id => id !== S.me).map(id => `<button class="pick" onclick="S.pick='${id}';force();window.scrollTo(0,0)">${esc(nome(id))}</button>`).join("")}
+        <div class="msg warn">Não encontras o nome? Essa pessoa ainda não entrou na app. Volta a abrir mais tarde.</div>
+        <button class="discreto" onclick="esqueci()">Não me lembro do meu</button></div>`;
+    return corpo;
+  }
+  let h = `<div class="top"><div class="emoji">🎄</div><h1>Olá, ${esc(primeiro(S.me))}!</h1><p class="sub">Amigo Secreto · Natal ${ano}</p></div>`;
+  const pares = S.anoDoc && S.anoDoc.pares;
+  if ((c.fase === "revelado" || c.fase === "sorteado") && pares && pares[S.me]) {
+    h += cartaoSegredo(pares[S.me]) + infoPrenda();
+  } else if (c.fase === "respostas") {
+    if (r && r.amigo) {
+      h += cartaoSegredo(r.amigo) + infoPrenda() + `<button class="btn grey" onclick="mudar()">Enganei-me, quero mudar</button>`;
+    } else if (r && r.esqueci) {
+      h += `<div class="card center"><div class="big">🤫</div><h2>Não faz mal!</h2>
+        <p>Quando todos tiverem escrito o seu, a app descobre o teu e mostra-te <b>aqui</b>.</p>
+        <p class="sub">Volta a abrir a app daqui a uns dias.</p></div>
+        <button class="btn grey" onclick="mudar()">Afinal já me lembro</button>`;
+    } else if (S.pick) {
+      h += `<div class="card center"><p>O teu amigo secreto deste ano é…</p><div class="big">${esc(nome(S.pick))}</div><p class="sub">Está certo?</p>
+        <button class="btn green" onclick="guardar()" ${S.busy ? "disabled" : ""}>Sim, guardar</button>
+        <button class="btn grey" onclick="S.pick=null;force()">Não, voltar</button></div>`;
+    } else {
+      h += `<div class="card"><h2>Quem te saiu no sorteio deste ano?</h2><p class="sub">Toca no nome. Ninguém mais vai ver.</p>
+        ${lista().filter(id => id !== S.me).map(id => `<button class="pick" onclick="S.pick='${id}';force()">${esc(nome(id))}</button>`).join("")}
+        <div class="msg warn">Não encontras o nome? Essa pessoa ainda não entrou na app. Volta a abrir mais tarde.</div>
+        <button class="discreto" onclick="esqueci()">Não me lembro do meu</button></div>`;
+    }
+  } else if (c.fase === "revelado" && r && r.esqueci) {
+    h += `<div class="card center"><div class="big">⏳</div><p>Quase! A app está a preparar o teu amigo secreto.</p></div>`;
+  } else {
+    const n = Object.keys(S.pessoas).length;
+    h += `<div class="card"><h2>Quem já está na app (${n})</h2>
+      ${lista().map(id => `<div class="row"><div class="nm"><b>${esc(nome(id))}${id === S.me ? ` <small style="color:var(--soft);font-weight:400">(tu)</small>` : ""}</b></div></div>`).join("")}
+      <p class="sub" style="margin:10px 0 0">Falta alguém? Manda-lhe o link da app.</p></div>` + infoPrenda();
+  }
+  return h;
+}
+function infoPrenda() {
+  const c = S.cfg;
+  if (!c.valor && !c.data && !c.dataDia) return "";
+  const info = [c.valor && `<p style="margin:0">🎁 Valor da prenda: <b>${esc(c.valor)}</b></p>`,
+    c.data && `<p style="margin:0">📅 Troca: <b>${esc(c.data)}</b></p>`].filter(Boolean).join(`<div style="height:8px"></div>`);
+  return contagem() + (info ? `<div class="card center">${info}</div>` : "");
+}
+// Contagem decrescente até ao dia da troca (config.dataDia = "AAAA-MM-DD")
+function contagem() {
+  const d = S.cfg.dataDia;
+  if (!d) return "";
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const dia = new Date(d + "T00:00");
+  const n = Math.round((dia - hoje) / 864e5);
+  if (isNaN(n) || n < 0) return "";
+  const quando = dia.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" });
+  const neve = Array.from({ length: 14 }, (_, i) =>
+    `<i style="left:${(i * 7.3 + 3) % 100}%;animation-delay:${(i * .37) % 4}s;animation-duration:${4 + (i % 4)}s">❄</i>`).join("");
+  let corpo;
+  if (n === 0) corpo = `<div class="cd-num">🎁</div><h2>É hoje!</h2><p>Bom Natal e boas prendas! 🎉</p>`;
+  else if (n === 1) corpo = `<div class="cd-num">1</div><h2>É amanhã! 🎄</h2><p>Já tens a prenda embrulhada? 👀</p>`;
+  else corpo = `<p class="cd-faltam">Faltam</p><div class="cd-num">${n}</div><h2>dias para a troca</h2>
+    ${n <= 5 ? `<p>Já compraste a prenda? 👀</p>` : ""}`;
+  return `<div class="card center cd">${neve}<div class="cd-in">${corpo}<p class="sub" style="margin:6px 0 0">${quando}</p></div></div>`;
+}
+// ---------- lista de desejos ----------
+let unsubMeus = null, meusDe = null, unsubAmigo = null;
+function ligarMeusDesejos() {
+  if (meusDe === S.me) return;
+  meusDe = S.me; unsubMeus && unsubMeus(); S.meusTodos = [];
+  unsubMeus = db.collection(`desejos/${S.me}/itens`).orderBy("em").onSnapshot(q => {
+    S.meusTodos = q.docs.map(d => Object.assign({ id: d.id }, d.data())); render();
+  });
+}
+function ligarDesejosAmigo(id) {
+  if (S.desejosDe === id) return;
+  S.desejosDe = id; unsubAmigo && unsubAmigo(); S.amigoTodos = [];
+  unsubAmigo = db.collection(`desejos/${id}/itens`).orderBy("em").onSnapshot(q => {
+    S.amigoTodos = q.docs.map(d => Object.assign({ id: d.id }, d.data())); render();
+  });
+}
+function linkSeguro(l) {
+  l = String(l || "").trim();
+  if (!l) return "";
+  if (!/^https?:\/\//i.test(l)) l = "https://" + l;
+  try { const u = new URL(l); return /^https?:$/.test(u.protocol) ? u.href : ""; } catch (e) { return ""; }
+}
+function cartaoDesejo(d, meu) {
+  if (meu && S.editar === d.id) return formEditar(d);
+  const l = linkSeguro(d.link);
+  let acoes = "";
+  if (meu) acoes = S.apagar === d.id
+    ? `<p style="margin:12px 0 0;color:var(--ink)">Apagar este desejo?</p>
+       <div class="acoes"><button class="perigo" onclick="apagarDesejo('${d.id}')">Sim, apagar</button>
+       <button onclick="S.apagar=null;force()">Não</button></div>`
+    : `<div class="acoes"><button onclick="S.editar='${d.id}';S.apagar=null;S.editMsg=null;force()">✏️ Editar</button>
+       <button class="perigo" onclick="S.apagar='${d.id}';S.editar=null;force()">🗑️ Apagar</button></div>`;
+  return `<div class="desejo"><b>${esc(d.titulo)}</b>${d.obs ? `<p>${esc(d.obs)}</p>` : ""}
+    ${l ? `<a href="${esc(l)}" target="_blank" rel="noopener">Abrir link ↗</a>` : ""}${acoes}</div>`;
+}
+function formEditar(d) {
+  return `<div class="desejo a-editar"><form novalidate onsubmit="guardarDesejo(event,'${d.id}')">
+    <label for="e-titulo">Título</label>
+    <input id="e-titulo" value="${esc(d.titulo)}" required>
+    <label for="e-link">Link <span class="sub">(opcional)</span></label>
+    <input id="e-link" type="url" inputmode="url" value="${esc(d.link || "")}">
+    <label for="e-obs">Observações <span class="sub">(opcional)</span></label>
+    <textarea id="e-obs">${esc(d.obs || "")}</textarea>
+    ${S.editMsg ? `<div class="msg err">${esc(S.editMsg)}</div>` : ""}
+    <div class="acoes"><button class="green" type="submit">Guardar</button>
+    <button type="button" onclick="S.editar=null;S.editMsg=null;force()">Cancelar</button></div>
+  </form></div>`;
+}
+async function guardarDesejo(e, id) {
+  e.preventDefault();
+  const t = document.getElementById("e-titulo").value.trim();
+  const l = document.getElementById("e-link").value.trim();
+  const o = document.getElementById("e-obs").value.trim();
+  document.activeElement && document.activeElement.blur();
+  if (!t) { S.editMsg = "Escreve um título."; return force(); }
+  if (l && !linkSeguro(l)) { S.editMsg = "O link não parece estar certo."; return force(); }
+  try {
+    await db.doc(`desejos/${S.me}/itens/${id}`).update({ titulo: t.slice(0, 120), link: l.slice(0, 500), obs: o.slice(0, 500) });
+    S.editar = null; S.editMsg = null;
+  } catch (err) { S.editMsg = "Não foi possível guardar. Verifica a internet."; }
+  force();
+}
+function vistaDesejos() {
+  let h = `<div class="top"><div class="emoji">📝</div><h1>A minha lista de desejos</h1>
+    <p class="sub">Só o teu amigo secreto vai ver esta lista.</p></div>`;
+  h += `<div class="card"><h2>Novo desejo</h2>
+    <form novalidate onsubmit="novoDesejo(event)">
+      <label for="d-titulo">Título</label>
+      <input id="d-titulo" placeholder="Ex.: Livro de receitas" required>
+      <label for="d-link">Link <span class="sub">(opcional)</span></label>
+      <input id="d-link" type="url" inputmode="url" placeholder="Ex.: www.loja.pt/livro">
+      <label for="d-obs">Observações <span class="sub">(opcional)</span></label>
+      <textarea id="d-obs" placeholder="Ex.: tamanho M, cor azul"></textarea>
+      <button class="btn green" type="submit">Adicionar à lista</button>
+      ${S.desejoMsg ? `<div class="msg err">${esc(S.desejoMsg)}</div>` : ""}
+    </form></div>`;
+  h += `<div class="card"><h2>Os meus desejos (${S.meusDesejos.length})</h2>
+    ${S.meusDesejos.length ? S.meusDesejos.map(d => cartaoDesejo(d, true)).join("") : `<p class="sub" style="margin:0">Ainda não puseste nenhum desejo.</p>`}</div>`;
+  return h;
+}
+async function novoDesejo(e) {
+  e.preventDefault();
+  const t = document.getElementById("d-titulo").value.trim();
+  const l = document.getElementById("d-link").value.trim();
+  const o = document.getElementById("d-obs").value.trim();
+  document.activeElement && document.activeElement.blur();
+  if (!t) { S.desejoMsg = "Escreve um título."; return force(); }
+  if (l && !linkSeguro(l)) { S.desejoMsg = "O link não parece estar certo."; return force(); }
+  S.desejoMsg = null;
+  try { await db.collection(`desejos/${S.me}/itens`).add({ titulo: t.slice(0, 120), link: l.slice(0, 500), obs: o.slice(0, 500), em: Date.now(), ano: S.cfg.ano }); }
+  catch (err) { S.desejoMsg = "Não foi possível guardar. Verifica a internet."; }
+  force();
+}
+async function apagarDesejo(id) {
+  S.apagar = null;
+  try { await db.doc(`desejos/${S.me}/itens/${id}`).delete(); }
+  catch (err) { S.desejoMsg = "Não foi possível apagar. Verifica a internet."; }
+  force();
+}
+function desejosDoAmigo(id) {
+  ligarDesejosAmigo(id);
+  return `<div class="card"><h2>📝 O que ${esc(primeiro(id))} gostava de receber</h2>
+    ${S.desejosAmigo.length ? S.desejosAmigo.map(d => cartaoDesejo(d, false)).join("")
+      : `<p class="sub" style="margin:0">${esc(primeiro(id))} ainda não pôs desejos na lista.</p>`}</div>`;
+}
+
+function cartaoSegredo(id) {
+  return `<div class="reveal"><p style="margin:0 0 6px">🎁 O teu amigo secreto é</p>
+    ${S.show ? `<div class="big">${esc(nome(id))}</div><button class="btn" onclick="S.show=false;force()">Esconder</button>`
+             : `<div class="hidden">• • • • •</div><button class="btn" onclick="S.show=true;force()">👀 Ver</button>`}
+    <p class="sub" style="color:var(--on-red);opacity:.7;margin:12px 0 0">Shhh… é segredo! 🤫</p></div>`
+    + (S.show ? desejosDoAmigo(id) : "");
+}
+async function guardar() {
+  S.busy = true; force();
+  try { await db.doc(`anos/${S.cfg.ano}/respostas/${S.me}`).set({ amigo: S.pick, em: Date.now() }); S.pick = null; S.show = false; }
+  catch (e) { S.pick = null; }
+  S.busy = false; force();
+}
+async function esqueci() { await db.doc(`anos/${S.cfg.ano}/respostas/${S.me}`).set({ esqueci: true, em: Date.now() }); }
+async function mudar() { S.show = false; await db.doc(`anos/${S.cfg.ano}/respostas/${S.me}`).delete(); }
+async function virarAdmin(e) {
+  e.preventDefault();
+  const v = document.getElementById("f-cod").value.trim().toLowerCase();
+  document.activeElement && document.activeElement.blur();
+  if (v !== CODIGO_ADMIN) { S.msg = "Código errado."; return force(); }
+  S.msg = null; S.adminOpen = false;
+  await CFG_REF.update({ adminId: S.me });
+}
+function irTab(t) { S.tab = t; S.confirm = null; S.adminMsg = null; S.show = false; S.recEdit = null; S.recMsg = null; force(); window.scrollTo(0, 0); }
+
+// ---------- recordações: histórico dos anos anteriores + álbuns de fotos ----------
+// recordacoes/{ano} {album, nota, pares:[{de, para}]} — "pares" só para os anos de antes da app (escritos à mão pelo admin).
+// Os anos feitos na app usam anos/{ano}.pares. O ano atual só aparece depois do dia da troca (o admin também participa).
+S.recs = null; S.anosHist = {}; S.recAberto = {}; S.recEdit = null; S.recMsg = null;
+let recsLigadas = false;
+function ligarRecordacoes() {
+  if (recsLigadas) return;
+  recsLigadas = true;
+  db.collection("recordacoes").onSnapshot(q => { S.recs = {}; q.forEach(d => S.recs[d.id] = d.data()); render(); }, () => { S.recs = {}; render(); });
+  db.collection("anos").onSnapshot(q => { S.anosHist = {}; q.forEach(d => { const p = d.data().pares; if (p) S.anosHist[d.id] = p; }); render(); }, () => {});
+}
+function trocaJaFoi() {
+  const d = S.cfg.dataDia;
+  if (!d) return false;
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  return new Date(d + "T00:00") < hoje;
+}
+// pares de um ano, como [{de, para, eu}] com nomes; null se ainda for segredo
+function paresDoAno(ano) {
+  const n = Number(ano), c = S.cfg;
+  const app = S.anosHist[ano];
+  if (app) {
+    const fechado = c.fase === "revelado" || c.fase === "sorteado";
+    if (n > c.ano || (n === c.ano && !(fechado && trocaJaFoi()))) return null;
+    return Object.keys(app).map(g => ({ de: nome(g), para: nome(app[g]), eu: g === S.me }));
+  }
+  const r = S.recs[ano];
+  return r && r.pares && r.pares.length ? r.pares.map(p => ({ de: p.de, para: p.para, eu: false })) : [];
+}
+function vistaRecordacoes() {
+  ligarRecordacoes();
+  let h = `<div class="top"><div class="emoji">📸</div><h1>Recordações</h1>
+    <p class="sub">Os amigos secretos e as fotos dos Natais passados.</p></div>`;
+  if (!S.recs) return h + `<p class="sub center">A abrir…</p>`;
+  if (isAdmin() && /^\d{4}$/.test(S.recEdit || "")) return h + formAno(S.recEdit);
+  const anos = Array.from(new Set(Object.keys(S.recs).concat(Object.keys(S.anosHist))))
+    .filter(a => /^\d{4}$/.test(a)).sort((a, b) => b - a)
+    .filter(a => S.recs[a] || paresDoAno(a)); // anos da app ainda secretos e sem álbum não aparecem
+  if (!anos.length) h += `<div class="card center"><p style="margin:0">Ainda não há recordações.</p>
+    <p class="sub" style="margin:8px 0 0">Depois da troca de prendas, aparecem aqui os amigos secretos de cada ano e o álbum de fotos.</p></div>`;
+  h += anos.map(cartaoAno).join("");
+  if (isAdmin()) h += S.recEdit === "novo"
+    ? `<div class="card"><h2>➕ Acrescentar um ano</h2><form novalidate onsubmit="novoAnoRec(event)">
+        <label for="r-ano">Ano</label><input id="r-ano" type="number" inputmode="numeric" placeholder="Ex.: 2025">
+        ${S.recMsg ? `<div class="msg err">${esc(S.recMsg)}</div>` : ""}
+        <div class="desejo" style="border:0;padding:0"><div class="acoes"><button class="green" type="submit">Continuar</button>
+        <button type="button" onclick="S.recEdit=null;S.recMsg=null;force()">Cancelar</button></div></div></form></div>`
+    : `<button class="btn grey" onclick="S.recEdit='novo';S.recMsg=null;force()">➕ Acrescentar um ano</button>`;
+  return h;
+}
+function cartaoAno(ano) {
+  const r = S.recs[ano] || {}, pares = paresDoAno(ano), album = linkSeguro(r.album);
+  let h = `<div class="card"><div class="ano-h"><h2>🎄 Natal ${esc(ano)}</h2></div>`;
+  if (r.nota) h += `<p class="sub" style="margin:6px 0 0;white-space:pre-wrap">${esc(r.nota)}</p>`;
+  if (album) h += `<a class="btn green" href="${esc(album)}" target="_blank" rel="noopener">📷 Ver álbum</a>`;
+  else if (isAdmin() && S.recEdit === "album:" + ano) h += `<form novalidate onsubmit="guardarAlbum(event,'${ano}')">
+      <label for="r-album">Link do álbum de fotos</label>
+      <input id="r-album" type="url" inputmode="url" placeholder="Ex.: photos.app.goo.gl/…">
+      ${S.recMsg ? `<div class="msg err">${esc(S.recMsg)}</div>` : ""}
+      <div class="desejo" style="border:0;padding:0;margin:0"><div class="acoes"><button class="green" type="submit">Guardar</button>
+      <button type="button" onclick="S.recEdit=null;S.recMsg=null;force()">Cancelar</button></div></div></form>`;
+  else if (isAdmin()) h += `<button class="btn green" onclick="S.recEdit='album:${ano}';S.recMsg=null;force()">➕ Adicionar álbum</button>`;
+  if (pares && pares.length) {
+    const aberto = S.recAberto[ano];
+    pares.sort((a, b) => a.de.localeCompare(b.de, "pt"));
+    h += `<button class="btn grey" onclick="S.recAberto['${ano}']=!S.recAberto['${ano}'];force()">${aberto ? "Esconder" : `🎁 Quem deu a quem (${pares.length})`}</button>`;
+    if (aberto) h += `<div style="margin-top:10px">${pares.map(p =>
+      `<div class="par${p.eu ? " eu" : ""}"><span class="de">${esc(p.de)}</span><span>🎁→</span><span class="para">${esc(p.para)}</span></div>`).join("")}</div>`;
+  } else if (!album && !isAdmin()) h += `<p class="sub" style="margin:10px 0 0">Ainda sem fotos nem amigos secretos guardados.</p>`;
+  return h + `</div>`;
+}
+function formAno(ano) {
+  const r = S.recs[ano] || {}, daApp = !!S.anosHist[ano];
+  const txt = (r.pares || []).map(p => p.de + " → " + p.para).join("\n");
+  return `<div class="card"><h2>✏️ Natal ${esc(ano)}</h2><form novalidate onsubmit="guardarAno(event,'${ano}')">
+    <label for="r-album">Link do álbum de fotos</label>
+    <input id="r-album" type="url" inputmode="url" value="${esc(r.album || "")}" placeholder="Ex.: photos.app.goo.gl/…">
+    <label for="r-nota">Nota <span class="sub">(opcional)</span></label>
+    <input id="r-nota" value="${esc(r.nota || "")}" placeholder="Ex.: jantar de 24 em casa da avó">
+    ${daApp ? `<p class="sub" style="margin:12px 0 0">Os amigos secretos deste ano vêm da app.</p>`
+      : `<label for="r-pares">Quem deu a quem <span class="sub">(um por linha)</span></label>
+         <textarea id="r-pares" rows="8" placeholder="Maria → João&#10;João → Ana">${esc(txt)}</textarea>`}
+    ${S.recMsg ? `<div class="msg err">${esc(S.recMsg)}</div>` : ""}
+    <div class="desejo" style="border:0;padding:0"><div class="acoes"><button class="green" type="submit">Guardar</button>
+    <button type="button" onclick="S.recEdit=null;S.recMsg=null;force()">Cancelar</button></div>
+    ${S.recs[ano] ? `<div class="acoes">${S.confirm === "rec:" + ano
+      ? `<button type="button" class="perigo" onclick="apagarAno('${ano}')">Sim, apagar ${esc(ano)}</button><button type="button" onclick="S.confirm=null;force()">Não</button>`
+      : `<button type="button" class="perigo" onclick="S.confirm='rec:${ano}';force()">🗑️ Apagar o álbum e a nota${daApp ? "" : " e os pares"}</button>`}</div>` : ""}</div>
+  </form></div>`;
+}
+function novoAnoRec(e) {
+  e.preventDefault();
+  const a = document.getElementById("r-ano").value.trim();
+  document.activeElement && document.activeElement.blur();
+  if (!/^(19|20)\d\d$/.test(a)) { S.recMsg = "Escreve um ano, por exemplo 2025."; return force(); }
+  S.recMsg = null; S.recEdit = a; force();
+}
+async function guardarAno(e, ano) {
+  e.preventDefault();
+  const album = document.getElementById("r-album").value.trim();
+  const nota = document.getElementById("r-nota").value.trim();
+  const ta = document.getElementById("r-pares");
+  document.activeElement && document.activeElement.blur();
+  if (album && !linkSeguro(album)) { S.recMsg = "O link do álbum não parece estar certo."; return force(); }
+  const d = { album: album.slice(0, 500), nota: nota.slice(0, 300), em: Date.now() };
+  if (ta) {
+    const pares = [], maus = [];
+    ta.value.split("\n").map(l => l.trim()).filter(Boolean).forEach(l => {
+      const m = l.split(/\s*(?:→|->|=>|>)\s*/);
+      if (m.length === 2 && m[0] && m[1]) pares.push({ de: cap(m[0]).slice(0, 60), para: cap(m[1]).slice(0, 60) });
+      else maus.push(l);
+    });
+    if (maus.length) { S.recMsg = `Não percebi: "${maus[0]}". Escreve assim: Maria → João (ou Maria > João).`; return force(); }
+    d.pares = pares;
+  }
+  try { await db.doc("recordacoes/" + ano).set(d, { merge: true }); S.recEdit = null; S.recMsg = null; }
+  catch (err) { S.recMsg = "Não foi possível guardar. Verifica a internet."; }
+  force();
+}
+async function guardarAlbum(e, ano) {
+  e.preventDefault();
+  const l = document.getElementById("r-album").value.trim();
+  document.activeElement && document.activeElement.blur();
+  if (!l || !linkSeguro(l)) { S.recMsg = "Cola o link do álbum (ex.: photos.app.goo.gl/…)."; return force(); }
+  try { await db.doc("recordacoes/" + ano).set({ album: l.slice(0, 500), em: Date.now() }, { merge: true }); S.recEdit = null; S.recMsg = null; }
+  catch (err) { S.recMsg = "Não foi possível guardar. Verifica a internet."; }
+  force();
+}
+async function apagarAno(ano) {
+  S.confirm = null; S.recEdit = null;
+  try { await db.doc("recordacoes/" + ano).delete(); } catch (err) { S.recMsg = "Não foi possível apagar."; }
+  force();
+}
+
+// ---------- admin ----------
+function vistaAdmin() {
+  const c = S.cfg, ids = lista(), n = ids.length;
+  const faseTxt = { registo: "Registo das pessoas", respostas: "Cada um escreve o seu", revelado: "Fechado ✅", sorteado: "Sorteado ✅" }[c.fase] || c.fase;
+  let h = `<div class="top"><div class="emoji">⚙️</div><h1>Admin</h1><p class="sub">Natal ${c.ano} · ${faseTxt}</p></div>`;
+  if (S.adminMsg) h += `<div class="msg ${S.adminMsg.t}">${S.adminMsg.h}</div>`;
+  const peds = Object.keys(S.pedidos).filter(id => S.pessoas[id]);
+  if (peds.length) h += `<div class="card" style="border:2px solid var(--red)"><h2>🔒 Pedidos de entrada</h2>
+    <p class="sub">Alguém quer entrar num telemóvel novo. Confirma com a pessoa antes de aceitar.</p>
+    ${peds.map(id => `<div class="row"><div class="nm"><b>${esc(nome(id))}</b><small>${esc(S.pessoas[id].telefone)} · escreveu "${esc(S.pedidos[id].escrito)}"</small></div>
+      <button class="btn green" style="width:auto;min-height:44px;margin:0;padding:0 14px;font-size:.95rem" onclick="aceitarPedido('${id}')">Aceitar</button>
+      <button class="x" onclick="recusarPedido('${id}')" aria-label="Recusar">✕</button></div>`).join("")}</div>`;
+
+  ligarAdminExtra();
+  const fechado = c.fase === "revelado" || c.fase === "sorteado";
+  const subs = [["natal", `🎄 Natal ${fechado ? c.ano + 1 : c.ano}`], ["casas", "🏠 Casas"], ["log", "📅 Entradas"], ["desejos", "📝 Desejos"]];
+  const sub = subs.some(([k]) => k === S.adminSub) ? S.adminSub : "natal";
+  h += `<nav class="submenu">${subs.map(([k, t]) => `<button class="${sub === k ? "on" : ""}" onclick="S.adminSub='${k}';S.confirm=null;S.adminMsg=null;force()">${t}</button>`).join("")}</nav>`;
+  if (sub === "natal") h += secNatal(ids);
+  else if (sub === "casas") h += secCasas(ids);
+  else if (sub === "log") h += cartaoEntradas(ids);
+  else h += cartaoDesejos(ids);
+  return h;
+}
+
+function secNatal(ids) {
+  const c = S.cfg, n = ids.length;
+  let h = "";
+  // ações da fase
+  h += `<div class="card"><h2>O que fazer agora</h2>`;
+  if (c.fase === "registo") {
+    // A partir de 2027 o sorteio é sempre feito na app.
+    const semCasa = ids.filter(id => !c.casas.includes(S.pessoas[id].casa)).length;
+    const ir = k => `<button class="x" style="font-size:.85rem;text-decoration:underline" onclick="S.adminSub='${k}';force()">mudar</button>`;
+    h += `<p class="sub">Antes do sorteio, confirma:</p>
+      <div class="row" style="flex-wrap:wrap"><div class="nm">👥 <b>${n}</b> pessoas na app</div>
+        <button class="x" style="font-size:.85rem;text-decoration:underline" onclick="S.verPessoas=!S.verPessoas;force()">${S.verPessoas ? "esconder" : `ver as ${n}`}</button>
+        ${S.verPessoas ? `<ol style="width:100%;margin:6px 0 0;padding-left:28px;line-height:1.7">${ids.map(id =>
+          `<li>${esc(nome(id))}${S.pessoas[id].casa ? ` <small style="color:var(--soft)">· 🏠 ${esc(S.pessoas[id].casa)}</small>` : ""}</li>`).join("")}</ol>` : ""}</div>
+      <div class="row"><div class="nm">🏠 ${c.casas.length ? `<b>${c.casas.length}</b> casas${semCasa ? ` · <b>${semCasa}</b> sem casa` : ""}` : `<b>Ainda não há casas</b><small>Sem casas, casais podem calhar um ao outro.</small>`}</div>${ir("casas")}</div>
+      <div style="padding:10px 0 0"><b>📏 Regras do sorteio</b>
+        <label class="toggle"><input type="checkbox" ${c.regras.casa ? "checked" : ""} onchange="regra('casa', this.checked)"> Não pode calhar alguém da mesma casa</label>
+        <label class="toggle"><input type="checkbox" ${c.regras.anoPassado ? "checked" : ""} onchange="regra('anoPassado', this.checked)"> Não pode repetir o amigo de ${c.ano - 1}</label></div>
+      ${botaoConfirm("sortear", "🎲 Fazer o sorteio", "green")}`;
+  } else if (c.fase === "respostas") {
+    const feitos = ids.filter(id => S.resp[id]).length;
+    h += `<p><b>${feitos}</b> de <b>${n}</b> já responderam.</p>
+      ${botaoConfirm("revelar", "✅ Estão todos — mostrar o de quem se esqueceu", "green")}
+      ${botaoConfirm("voltarRegisto", "↩️ Voltar ao registo", "grey")}`;
+  } else {
+    h += `<p>Cada pessoa já vê o seu amigo secreto na app.</p>
+      ${c.fase === "sorteado" ? botaoConfirm("sortear", "🎲 Refazer o sorteio", "grey") : ""}
+      ${botaoConfirm("novoAno", `🎄 Começar o Natal ${c.ano + 1}`, "")}`;
+  }
+  h += `</div>`;
+
+  // quem já respondeu (só enquanto cada um escreve o seu)
+  if (c.fase === "respostas") h += `<div class="card"><h2>Respostas</h2>${ids.map(id => {
+    const r = S.resp[id];
+    const tag = r ? (r.esqueci ? `<span class="tag forgot">😅 esqueceu-se</span>` : `<span class="tag ok">✅ já escreveu</span>`) : `<span class="tag wait">⏳ falta</span>`;
+    return `<div class="row"><div class="nm"><b>${esc(nome(id))}</b></div>${tag}</div>`;
+  }).join("")}</div>`;
+
+  h += `<div class="card"><h2>A troca de prendas</h2>
+    <label for="f-valor">Valor da prenda (aparece a todos)</label>
+    <input id="f-valor" value="${esc(c.valor)}" placeholder="Ex.: até 25 €" onchange="CFG_REF.update({valor:this.value.trim()})">
+    <label for="f-dia">Dia da troca (para a contagem decrescente)</label>
+    <input id="f-dia" type="date" value="${esc(c.dataDia || "")}" onchange="CFG_REF.update({dataDia:this.value})">
+    <label for="f-data">Onde / quando (aparece a todos)</label>
+    <input id="f-data" value="${esc(c.data)}" placeholder="Ex.: jantar de 24, casa da avó" onchange="CFG_REF.update({data:this.value.trim()})">
+  </div>`;
+  return h;
+}
+
+
+function secCasas(ids) {
+  const c = S.cfg;
+  let h = `<div class="card"><h2>Casas</h2><p class="sub">Pessoas da mesma casa não se podem calhar uma à outra no sorteio.</p>
+    <div class="casas">${c.casas.map((k, i) => `<span class="chip">🏠 ${esc(k)} (${ids.filter(id => S.pessoas[id].casa === k).length})
+      <button class="x" onclick="tirarCasa(${i})" aria-label="Apagar casa">✕</button></span>`).join("")}</div>
+    <form class="inline" onsubmit="novaCasa(event)"><input id="f-casa" placeholder="Ex.: Casa da Avó"><button class="btn green" type="submit">+</button></form></div>`;
+  // pessoas agrupadas por casa
+  const grupos = c.casas.map(k => [`🏠 ${k}`, ids.filter(id => S.pessoas[id].casa === k)]);
+  grupos.push(["Sem casa", ids.filter(id => !c.casas.includes(S.pessoas[id].casa))]);
+  h += grupos.filter(([, l]) => l.length).map(([t, l]) =>
+    `<div class="card"><h2>${esc(t)} (${l.length})</h2>${l.map(linhaPessoa).join("")}</div>`).join("")
+    || `<div class="card"><p class="sub">Ainda ninguém se registou.</p></div>`;
+  return h;
+}
+
+function linhaPessoa(id) {
+    const c = S.cfg, p = S.pessoas[id], tag = "";
+    const sel = `<select onchange="porCasa('${id}', this.value)" aria-label="Casa de ${esc(nome(id))}">
+        <option value="">Sem casa</option>${c.casas.map(k => `<option ${p.casa === k ? "selected" : ""}>${esc(k)}</option>`).join("")}</select>`;
+    const del = S.confirm === "del:" + id
+      ? `<button class="x" style="color:var(--red)" onclick="apagar('${id}')">Apagar?</button>`
+      : `<button class="x" onclick="S.confirm='del:${id}';force()" aria-label="Apagar">✕</button>`;
+    return `<div class="row"><div class="nm"><b>${esc(nome(id))}${id === c.adminId ? " ⭐" : ""}</b><small>${esc(p.telefone)}</small>${tag}</div>${sel}${del}</div>`;
+}
+function botaoConfirm(acao, txt, cor) {
+  if (S.confirm === acao) return `<div class="msg warn">Tens a certeza? <b>${txt}</b>
+      <button class="btn ${cor || ""}" onclick="fazer('${acao}')" ${S.busy ? "disabled" : ""}>Sim, avançar</button>
+      <button class="btn grey" onclick="S.confirm=null;force()">Cancelar</button></div>`;
+  return `<button class="btn ${cor}" onclick="S.confirm='${acao}';S.adminMsg=null;force()">${txt}</button>`;
+}
+// ---------- registo de entradas (1 documento por pessoa por dia) ----------
+const diaDe = t => { const d = new Date(t); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+let entradaFeita = false;
+function registarEntrada() {
+  if (entradaFeita || !S.me) return;
+  entradaFeita = true;
+  const agora = Date.now(), dia = diaDe(agora);
+  const aparelho = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "telemovel" : "computador";
+  db.doc(`entradas/${dia}_${S.me}`).set({ pessoa: S.me, dia, ultima: agora,
+    vezes: firebase.firestore.FieldValue.increment(1),
+    aparelhos: firebase.firestore.FieldValue.arrayUnion(aparelho) }, { merge: true }).catch(() => {});
+}
+
+// ---------- admin: entradas e desejos de todos ----------
+let adminExtra = false;
+S.entradas = null; S.verTodasEntradas = false;
+const nDes = id => S.desejosTodos[id] ? S.desejosTodos[id].filter(desteAno).length : undefined;
+function ligarAdminExtra() {
+  if (adminExtra || !isAdmin()) return;
+  adminExtra = true;
+  db.collection("entradas").orderBy("dia", "desc").limit(500)
+    .onSnapshot(q => { S.entradas = []; q.forEach(d => S.entradas.push(d.data())); render(); }, () => {});
+  const ligados = {};
+  const ligarDesejos = id => {
+    if (ligados[id]) return;
+    ligados[id] = true;
+    db.collection(`desejos/${id}/itens`).onSnapshot(q => { S.desejosTodos[id] = q.docs.map(d => d.data()); render(); }, () => {});
+  };
+  Object.keys(S.pessoas || {}).forEach(ligarDesejos);
+  db.collection("pessoas").onSnapshot(q => q.forEach(d => ligarDesejos(d.id)), () => {});
+}
+function cartaoEntradas(ids) {
+  // junta as entradas guardadas com o dia em que cada um se registou
+  const porDia = {};
+  (S.entradas || []).forEach(e => { if (S.pessoas[e.pessoa]) (porDia[e.dia] = porDia[e.dia] || {})[e.pessoa] = e; });
+  ids.forEach(id => {
+    const t = S.pessoas[id].criadoEm; if (!t) return;
+    const d = diaDe(t), g = (porDia[d] = porDia[d] || {});
+    g[id] = Object.assign({ pessoa: id, ultima: t }, g[id] || {}, { registo: true });
+  });
+  const dias = Object.keys(porDia).sort().reverse();
+  const hoje = diaDe(Date.now()), hojeN = Object.keys(porDia[hoje] || {}).length;
+  const mostrar = S.verTodasEntradas ? dias : dias.slice(0, 5);
+  const hora = t => new Date(t).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+  const nomeDia = d => d === hoje ? "Hoje" : new Date(d + "T12:00").toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "short" });
+  let h = `<div class="card"><h2>📅 Quem entrou na app</h2>
+    <p class="sub">Hoje entraram <b>${hojeN}</b> de ${ids.length}. Conta uma vez por dia por pessoa (antes de 17/11 só há o dia do registo).</p>`;
+  h += mostrar.map(d => {
+    const linhas = Object.values(porDia[d]).sort((a, b) => (b.ultima || 0) - (a.ultima || 0)).map(e => {
+      const ap = (e.aparelhos || []).map(a => a === "computador" ? "💻" : "📱").join("");
+      const extra = [e.registo ? `<span class="tag ok">🆕 registou-se</span>` : "", e.vezes > 1 ? `${e.vezes}×` : ""].filter(Boolean).join(" ");
+      return `<div class="row"><div class="nm"><b>${esc(nome(e.pessoa))}</b><small>${e.vezes ? "última às " : "às "}${hora(e.ultima)} ${ap}</small></div><small>${extra}</small></div>`;
+    }).join("");
+    return `<h3 style="margin:16px 0 0;font-size:1rem;text-transform:capitalize">${nomeDia(d)} <small style="color:var(--soft);font-weight:400">(${Object.keys(porDia[d]).length})</small></h3>${linhas}`;
+  }).join("") || `<p class="sub">Ainda sem entradas.</p>`;
+  if (dias.length > 5) h += `<button class="link" style="margin-top:14px" onclick="S.verTodasEntradas=!S.verTodasEntradas;force()">${S.verTodasEntradas ? "Mostrar só os últimos dias" : `Ver todos os dias (${dias.length})`}</button>`;
+  return h + `</div>`;
+}
+function cartaoDesejos(ids) {
+  const com = ids.filter(id => nDes(id) > 0).length;
+  const ord = ids.slice().sort((a, b) => (nDes(a) || 0) - (nDes(b) || 0) || nome(a).localeCompare(nome(b), "pt"));
+  const faltam = ids.filter(id => nDes(id) === 0);
+  const carregado = ids.every(id => nDes(id) != null);
+  const botao = !carregado ? ""
+    : faltam.length ? `<button class="btn green" onclick="lembrarWhatsApp()">📲 Lembrar no WhatsApp (${faltam.length})</button>`
+    : `<button class="btn grey" disabled>Estão todos ✅</button>`;
+  return `<div class="card"><h2>📝 Listas de desejos</h2>
+    <p><b>${com}</b> de <b>${ids.length}</b> já puseram desejos.</p>
+    ${botao}<div style="height:10px"></div>
+    ${ord.map(id => {
+      const n = nDes(id);
+      const tag = n == null ? `<span class="tag">…</span>` : n ? `<span class="tag ok">✅ ${n} ${n === 1 ? "desejo" : "desejos"}</span>` : `<span class="tag wait">⏳ nenhum</span>`;
+      return `<div class="row"><div class="nm"><b>${esc(nome(id))}</b></div>${tag}</div>`;
+    }).join("")}</div>`;
+}
+
+// Abre o WhatsApp com a mensagem já escrita; o organizador escolhe o grupo da família e envia.
+function lembrarWhatsApp() {
+  const ids = lista(), faltam = ids.filter(id => nDes(id) === 0);
+  if (!faltam.length) return;
+  // primeiro nome, ou nome completo se houver dois com o mesmo primeiro nome
+  const nm = id => ids.filter(o => primeiro(o) === primeiro(id)).length > 1 ? nome(id) : primeiro(id);
+  const nomes = faltam.map(nm);
+  const juntos = nomes.length > 1 ? nomes.slice(0, -1).join(", ") + " e " + nomes[nomes.length - 1] : nomes[0];
+  const msg = `🔔Lembrete!\n🎄 Amigo Secreto ${S.cfg.ano} — ainda ${faltam.length === 1 ? "falta o desejo" : "faltam os desejos"} de: *${juntos}*! 🎁\n`
+    + `Ponham lá pelo menos um por favor🙏👉 ${location.origin + location.pathname}`;
+  // api.whatsapp.com direto: o redirecionamento do wa.me estraga os emojis (aparecem como �)
+  window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
+}
+
+let unsubPedidos = null;
+function ligarPedidosAdmin() {
+  if (!isAdmin() || unsubPedidos) return;
+  unsubPedidos = db.collection("pedidos").onSnapshot(q => { S.pedidos = {}; q.forEach(d => S.pedidos[d.id] = d.data()); render(); });
+}
+async function aceitarPedido(id) {
+  const b = db.batch();
+  b.update(db.doc("pessoas/" + id), { chaves: firebase.firestore.FieldValue.arrayUnion(S.pedidos[id].hash) });
+  b.delete(db.doc("pedidos/" + id));
+  await b.commit();
+}
+async function recusarPedido(id) { await db.doc("pedidos/" + id).delete(); }
+async function porCasa(id, v) { await db.doc("pessoas/" + id).update({ casa: v }); }
+async function apagar(id) {
+  S.confirm = null;
+  await db.doc("pessoas/" + id).delete();
+  await db.doc(`anos/${S.cfg.ano}/respostas/${id}`).delete().catch(() => {});
+  await db.doc("pedidos/" + id).delete().catch(() => {});
+}
+async function novaCasa(e) {
+  e.preventDefault();
+  const el = document.getElementById("f-casa"), v = el.value.trim();
+  el.value = ""; el.blur();
+  if (v && !S.cfg.casas.includes(v)) await CFG_REF.update({ casas: firebase.firestore.FieldValue.arrayUnion(v) });
+}
+async function tirarCasa(i) {
+  const k = S.cfg.casas[i];
+  await CFG_REF.update({ casas: S.cfg.casas.filter((_, j) => j !== i) });
+  for (const id of lista()) if (S.pessoas[id].casa === k) await db.doc("pessoas/" + id).update({ casa: "" });
+}
+async function regra(k, v) { await CFG_REF.update({ ["regras." + k]: v }); }
+
+async function fazer(acao) {
+  if (acao === "sortear") Som.init(); // o som só pode arrancar com um toque
+  S.busy = true; force();
+  const c = S.cfg, ano = c.ano;
+  try {
+    if (acao === "abrir") { await CFG_REF.update({ fase: "respostas" }); ok("Pronto! Avisa a família: cada um abre a app e escreve o seu."); }
+    if (acao === "voltarRegisto") { await CFG_REF.update({ fase: "registo" }); ok("Voltaste ao registo. As respostas já dadas ficam guardadas."); }
+    if (acao === "novoAno") {
+      // ano novo: o valor, o dia e o local da troca começam vazios
+      await CFG_REF.update({ ano: ano + 1, fase: "registo", valor: "", data: "", dataDia: "" });
+      ok(`Natal ${ano + 1} começou! 🎄 Confirma as pessoas e as casas e depois carrega em "Fazer o sorteio".`);
+    }
+    if (acao === "revelar") await revelar();
+    if (acao === "sortear") await sortear();
+  } catch (e) { erro("Algo correu mal: " + esc(e.message)); }
+  S.busy = false; S.confirm = null; force();
+}
+const ok = h => S.adminMsg = { t: "ok", h };
+const erro = h => S.adminMsg = { t: "err", h };
+
+// Descobre o par de quem se esqueceu, sem mostrar nada ao admin.
+async function revelar() {
+  const ids = lista();
+  const faltam = ids.filter(id => !S.resp[id]);
+  if (faltam.length) return erro("Ainda falta responder: <b>" + faltam.map(id => esc(nome(id))).join(", ") + "</b>.");
+  const pares = {}, esqueceram = [], recebem = {};
+  for (const id of ids) {
+    const r = S.resp[id];
+    if (r.esqueci) { esqueceram.push(id); continue; }
+    if (!S.pessoas[r.amigo]) return erro(`${esc(nome(id))} escolheu alguém que já não está na app. Pede-lhe para escolher outra vez.`);
+    (recebem[r.amigo] = recebem[r.amigo] || []).push(id);
+    pares[id] = r.amigo;
+  }
+  const repetidos = Object.values(recebem).filter(g => g.length > 1);
+  if (repetidos.length) return erro("Há pessoas que escreveram o mesmo amigo secreto: <b>" +
+    repetidos.map(g => g.map(id => esc(nome(id))).join(" e ")).join("; ") + "</b>. Pede-lhes para confirmarem.");
+  const sobram = ids.filter(id => !recebem[id]);
+  if (sobram.length !== esqueceram.length) return erro("As contas não batem. Confirma se toda a gente está na app.");
+  // todas as formas possíveis de ligar quem se esqueceu a quem sobrou (ninguém a si próprio)
+  const sols = [];
+  (function perm(i, usados, atual) {
+    if (sols.length > 1) return;
+    if (i === esqueceram.length) { sols.push(atual.slice()); return; }
+    for (const s of sobram) if (!usados.has(s) && s !== esqueceram[i]) {
+      usados.add(s); atual.push(s); perm(i + 1, usados, atual); atual.pop(); usados.delete(s);
+    }
+  })(0, new Set(), []);
+  if (sols.length !== 1) return erro(esqueceram.length > 1
+    ? `Há ${esqueceram.length} pessoas que se esqueceram e assim não dá para descobrir de quem é cada um. Pede a uma delas para tentar lembrar-se.`
+    : "Não foi possível descobrir. Confirmem as respostas.");
+  esqueceram.forEach((id, i) => pares[id] = sols[0][i]);
+  await db.doc("anos/" + S.cfg.ano).set({ pares, origem: "respostas", em: Date.now() });
+  await CFG_REF.update({ fase: "revelado" });
+  ok(esqueceram.length
+    ? `Feito! 🎉 ${esc(nome(esqueceram[0]))} já pode abrir a app e ver o seu amigo secreto. (Tu não vês qual é.)`
+    : "Feito! Ninguém se esqueceu, está tudo guardado. 🎉");
+}
+
+// Sorteio com as regras; o resultado não é mostrado ao admin.
+async function sortear() {
+  const ids = lista(), c = S.cfg;
+  if (ids.length < 3) return erro("São precisas pelo menos 3 pessoas.");
+  let passado = {};
+  if (c.regras.anoPassado) {
+    const s = await db.doc("anos/" + (c.ano - 1)).get();
+    passado = (s.exists && s.data().pares) || {};
+  }
+  const pode = (g, r) => g !== r
+    && !(c.regras.casa && S.pessoas[g].casa && S.pessoas[g].casa === S.pessoas[r].casa)
+    && !(c.regras.anoPassado && passado[g] === r);
+  const opc = {}; ids.forEach(g => opc[g] = ids.filter(r => pode(g, r)));
+  const ordem = ids.slice().sort((a, b) => opc[a].length - opc[b].length);
+  const bar = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const res = {}, usados = new Set();
+  let passos = 0;
+  const tenta = i => {
+    if (++passos > 200000) return false;
+    if (i === ordem.length) return true;
+    const g = ordem[i];
+    for (const r of bar(opc[g])) if (!usados.has(r)) {
+      usados.add(r); res[g] = r;
+      if (tenta(i + 1)) return true;
+      usados.delete(r); delete res[g];
+    }
+    return false;
+  };
+  if (!tenta(0)) return erro("Com estas regras não há sorteio possível. Experimenta mudar as casas ou desligar uma regra.");
+  // avisa todos os aparelhos abertos: o sorteio está a acontecer (e quem abrir depois vê-o também)
+  const em = Date.now();
+  S.aCorrer = true; store.set("as_visto", c.ano + ":" + em);
+  await CFG_REF.update({ aoVivo: { ano: c.ano, em, pronto: false } });
+  const feito = await animarSorteio(ids, textoRegras(c), async () => {
+    await db.doc("anos/" + c.ano).set({ pares: res, origem: "sorteio", em: Date.now() });
+    await CFG_REF.update({ fase: "sorteado", "aoVivo.pronto": true });
+  });
+  S.aCorrer = false;
+  if (!feito) await CFG_REF.update({ aoVivo: firebase.firestore.FieldValue.delete() }).catch(() => {});
+  if (feito) { ok("Sorteio feito! 🎲 Cada pessoa já vê o seu na app. (Tu só vês o teu.)"); S.tab = "meu"; window.scrollTo(0, 0); }
+  else erro("O sorteio não ficou guardado. Verifica a internet e tenta outra vez.");
+}
+
+// ---------- sons do sorteio (sintetizados, sem ficheiros) ----------
+const Som = {
+  ctx: null, ligado: store.get("as_som") !== "0",
+  init() {
+    try { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); this.ctx.resume(); } catch (e) {}
+  },
+  ok() { return this.ligado && this.ctx; },
+  nota(freq, t0, dur, tipo = "sine", vol = .25) {
+    if (!this.ok()) return;
+    const c = this.ctx, o = c.createOscillator(), g = c.createGain(), t = c.currentTime + t0;
+    o.type = tipo; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .05);
+  },
+  ruido(t0, dur, vol = .3, filtro = 1000, tipo = "bandpass") {
+    if (!this.ok()) return;
+    const c = this.ctx, n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(), t = c.currentTime + t0;
+    s.buffer = b; f.type = tipo; f.frequency.value = filtro;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    s.connect(f).connect(g).connect(c.destination); s.start(t);
+  },
+  papel(i, n) { // "plim" que sobe de tom a cada nome
+    const f = 520 * Math.pow(2, (i / Math.max(n - 1, 1)) * 1.2);
+    this.nota(f, 0, .18, "triangle", .18); this.nota(f * 2, .02, .1, "sine", .06); this.ruido(0, .06, .08, 3000);
+  },
+  rufar(dur) { // rufo de tambor a crescer
+    for (let t = 0; t < dur; t += .045) this.ruido(t, .07, .06 + .22 * (t / dur), 180 + 120 * Math.random(), "lowpass");
+    this.ruido(dur, .25, .5, 120, "lowpass");
+  },
+  sinos() { // guizos de trenó
+    for (let t = 0; t < 1.4; t += .11) { this.ruido(t, .08, .12, 7000, "highpass"); this.nota(2400 + Math.random() * 600, t, .08, "sine", .04); }
+  },
+  tique(final) { this.nota(final ? 880 : 660, 0, .22, "square", .12); this.ruido(0, .04, .1, 2000); },
+  fanfarra() {
+    this.ruido(0, 1.6, .35, 6000, "highpass"); // prato
+    [[523, 0], [659, .14], [784, .28], [1047, .42], [784, .62], [1047, .76]].forEach(([f, t]) => {
+      this.nota(f, t, t >= .76 ? .9 : .2, "sawtooth", .09); this.nota(f, t, t >= .76 ? .9 : .2, "triangle", .14);
+    });
+    this.nota(523, .76, .9, "triangle", .1); this.nota(659, .76, .9, "triangle", .08);
+  },
+  vibrar(p) { try { this.ligado && navigator.vibrate && navigator.vibrate(p); } catch (e) {} }
+};
+
+// O navegador só deixa tocar som depois de um toque: o primeiro toque na app desbloqueia-o,
+// para que o sorteio dos outros já se ouça quando começar sozinho.
+document.addEventListener("pointerdown", () => Som.init(), { once: true });
+
+// Suspense: os nomes caem no chapéu, baralha, conta 3-2-1 e só então guarda. Nunca mostra pares.
+const textoRegras = c => [c.regras.casa && "Ninguém da mesma casa", c.regras.anoPassado && `Ninguém repete o de ${c.ano - 1}`].filter(Boolean).join(" · ");
+
+// ---------- quem não é o organizador também vê o sorteio ----------
+let conviteFeito = null;
+function verificarAoVivo() {
+  const c = S.cfg, v = c.aoVivo;
+  if (!v || v.ano !== c.ano || S.aCorrer || !S.me || document.querySelector(".sorteio")) return;
+  const chave = v.ano + ":" + v.em;
+  if (store.get("as_visto") === chave || conviteFeito === chave) return;
+  const aDecorrer = !v.pronto && Math.abs(Date.now() - v.em) < 90000;
+  if (!aDecorrer && !v.pronto) return;
+  conviteFeito = chave;
+  // Começa logo, sem ecrã intermédio: a animação aparece a todos ao mesmo tempo.
+  setTimeout(async () => {
+    store.set("as_visto", chave);
+    // espera que o organizador guarde o resultado
+    const esperar = async () => {
+      for (let i = 0; i < 120; i++) {
+        if (S.cfg.aoVivo && S.cfg.aoVivo.pronto && S.anoDoc && S.anoDoc.pares) return;
+        await new Promise(r => setTimeout(r, 500));
+      }
+      throw new Error("demorou demasiado");
+    };
+    await animarSorteio(lista(), textoRegras(S.cfg), esperar, true);
+    S.tab = "meu"; S.show = false; force(); window.scrollTo(0, 0);
+  }, 0);
+}
+
+function animarSorteio(ids, regras, guardar, espectador) {
+  return new Promise(resolve => {
+    const ov = document.createElement("div");
+    ov.className = "sorteio";
+    ov.innerHTML = `<div class="s-palco"><div class="s-papeis"></div><div class="s-chapeu">🎩</div></div>
+      <h2 class="s-txt">A juntar os nomes…</h2><p class="s-sub"></p><div class="s-fim"></div>
+      <button class="s-som" aria-label="Som">${Som.ligado ? "🔊" : "🔇"}</button>`;
+    document.body.appendChild(ov);
+    const q = s => ov.querySelector(s), espera = ms => new Promise(r => setTimeout(r, ms));
+    const chapeu = q(".s-chapeu"), txt = q(".s-txt"), sub = q(".s-sub");
+    q(".s-som").onclick = e => { Som.ligado = !Som.ligado; store.set("as_som", Som.ligado ? "1" : "0"); Som.init(); e.target.textContent = Som.ligado ? "🔊" : "🔇"; };
+    (async () => {
+      const nomes = ids.slice().sort(() => Math.random() - .5).map(primeiro);
+      for (let i = 0; i < nomes.length; i++) {
+        const p = document.createElement("span");
+        p.className = "s-papel"; p.textContent = nomes[i];
+        p.style.setProperty("--x", Math.round(Math.random() * 220 - 110) + "px");
+        p.style.setProperty("--r", Math.round(Math.random() * 70 - 35) + "deg");
+        q(".s-papeis").appendChild(p);
+        sub.textContent = `${i + 1} de ${nomes.length}`;
+        setTimeout(() => Som.papel(i, nomes.length), 900); // quando o papel entra no chapéu
+        await espera(Math.max(140, 2200 / nomes.length));
+      }
+      await espera(900);
+      txt.textContent = "A baralhar os papelinhos…"; sub.textContent = ""; chapeu.classList.add("abanar");
+      Som.rufar(2.4); Som.vibrar([60, 40, 60, 40, 60, 40, 60, 40, 60]);
+      await espera(2400);
+      txt.textContent = "A confirmar as regras…"; sub.textContent = regras; Som.sinos();
+      await espera(1600);
+      chapeu.classList.remove("abanar"); sub.textContent = "";
+      for (const n of [3, 2, 1]) { txt.innerHTML = `<span class="s-conta">${n}</span>`; Som.tique(n === 1); Som.vibrar(80); await espera(850); }
+      let falhou = false;
+      try { await guardar(); } catch (e) { falhou = true; }
+      if (falhou) { chapeu.textContent = "😕"; txt.textContent = "Ups, algo correu mal"; sub.textContent = "O sorteio não ficou guardado."; }
+      else {
+        chapeu.textContent = "🎁"; chapeu.classList.add("salto");
+        Som.fanfarra(); Som.vibrar([200, 80, 200]);
+        txt.textContent = "Sorteio feito! 🎉";
+        sub.innerHTML = espectador ? `<b>${ids.length}</b> papelinhos entregues.<br>O teu amigo secreto está à tua espera!`
+          : `<b>${ids.length}</b> papelinhos entregues.<br>Cada um já vê o seu na app — tu só vês o teu.`;
+        const cores = ["#e8958e", "#96cdab", "#f1d7a3", "#fff", "#a9504a"];
+        for (let i = 0; i < 70; i++) {
+          const c = document.createElement("i");
+          c.className = "s-confeti";
+          c.style.cssText = `left:${Math.random() * 100}%;background:${cores[i % cores.length]};animation-delay:${Math.random() * .8}s;animation-duration:${2 + Math.random() * 1.5}s`;
+          ov.appendChild(c);
+        }
+      }
+      q(".s-fim").innerHTML = `<button class="btn">${falhou ? "Fechar" : "🎁 Ver o meu"}</button>`;
+      q(".s-fim button").onclick = () => { ov.remove(); resolve(!falhou); };
+    })();
+  });
+}
+
+// ---------- ligação à base de dados ----------
+let unsubAno = null, unsubResp = null, anoAtual = null;
+function ligarAno(ano) {
+  if (ano === anoAtual) return;
+  anoAtual = ano; unsubAno && unsubAno(); unsubResp && unsubResp();
+  S.resp = {}; S.anoDoc = null; S.anoPronto = false; S.respPronto = false;
+  unsubAno = db.doc("anos/" + ano).onSnapshot(s => { S.anoDoc = s.exists ? s.data() : null; S.anoPronto = true; render(); });
+  unsubResp = db.collection(`anos/${ano}/respostas`).onSnapshot(q => { S.resp = {}; q.forEach(d => S.resp[d.id] = d.data()); S.respPronto = true; render(); });
+}
+CFG_REF.onSnapshot(async s => {
+  if (!s.exists) { await CFG_REF.set(CFG_DEFAULT); return; }
+  S.cfg = Object.assign({}, CFG_DEFAULT, s.data());
+  S.cfg.regras = Object.assign({}, CFG_DEFAULT.regras, S.cfg.regras);
+  ligarAno(S.cfg.ano); render();
+}, () => { document.getElementById("app").innerHTML = `<div class="card center"><p>Sem ligação. Verifica a internet e volta a abrir.</p></div>`; });
+db.collection("pessoas").onSnapshot(q => {
+  S.pessoas = {}; q.forEach(d => S.pessoas[d.id] = d.data());
+  verificarChave();
+  render();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // App de família, sem contas: só estas coleções são acessíveis.
+    match /pessoas/{id} { allow read, write: if true; }
+    match /config/{id} { allow read, write: if true; }
+    match /pedidos/{id} { allow read, write: if true; }
+    match /entradas/{id} { allow read, write: if true; }
+    match /desejos/{id}/itens/{item} { allow read, write: if true; }
+    match /recordacoes/{ano} { allow read, write: if true; }
+    match /anos/{ano} {
+      allow read, write: if true;
+      match /respostas/{id} { allow read, write: if true; }
+    }
+  }
+}
