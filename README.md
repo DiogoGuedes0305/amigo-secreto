@@ -5,6 +5,9 @@ e o organizador faz o sorteio na app. Sem contas e sem palavras-passe, num só f
 
 ▶ **Experimentar a demo:** https://diogoguedes0305.github.io/amigo-secreto/
 
+<p align="center"><img src="docs/demo.gif" alt="Demo animada: entrar, lista de desejos, sorteio animado, o amigo secreto e recordações" width="720"></p>
+<p align="center"><sub>🎬 Demo animada · do registo ao sorteio</sub></p>
+
 > A demo usa uma **família fictícia** (Ana, Bruno, Carla…) e guarda tudo **só no teu browser**.
 > Entra como a organizadora com **Ana Ribeiro · 910 000 001**, ou como outra pessoa com 910 000 002 a 910 000 008.
 > "👤 Trocar de pessoa" muda de pessoa e "↺ Repor" volta ao início.
